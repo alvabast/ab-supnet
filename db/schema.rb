@@ -13,6 +13,9 @@
 
 ActiveRecord::Schema.define(version: 20141019211743) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "companies", force: true do |t|
     t.integer  "type_enum"
     t.integer  "user_id"
