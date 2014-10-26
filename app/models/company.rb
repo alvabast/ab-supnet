@@ -2,7 +2,7 @@
 #"street", "zipcode", "number", "created_at", "updated_at"
 
 class Company < ActiveRecord::Base
-  validates :type_enum,    presence: true
+  validates :type_enum,   presence: true
   validates :name,        presence: true,   uniqueness: true
   validates :country,     presence: true
   validates :city,        presence: true
