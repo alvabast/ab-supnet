@@ -1,17 +1,15 @@
 Rails.application.routes.draw do
+  get 'account/index'
+
   root :to => "static#index"
 
-  resources :company_products
-
   resources :users do
-    resources :companies
+    resources :companies, only: [:index, :new, :create]
   end
+  resources :companies, only: [:show, :edit, :update, :destroy]
 
-  resources :companies
 
-  resources :products
-
-  resources :product_types
+  resources :products, :product_types, :company_products
 
   #resources :users
 

@@ -24,8 +24,12 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
+    # TODO: 
+    # valid = False
     @user = User.new(user_params)
-
+    
+    # lowercase login/email
+    # Send email to adress
     respond_to do |format|
       if @user.save
         format.html { redirect_to @user, notice: 'User was successfully created.' }
