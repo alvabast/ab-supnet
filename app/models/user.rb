@@ -1,30 +1,40 @@
-#"name", "last_name", "email", "password", "password_salt", "login"
-#"date_of_birth", "created_at", "updated_at"
+# Schema: User(name:string, last_name:string, email:string, password_digest:string, password_salt:string,
+# =>           login:string, date_of_birth:string, created_at:datetime, updated_at:datetime)
 
 class User < ActiveRecord::Base
-  before_create :encrypt_password
+  before_save :lowercase_email_login
 
-  validates :name, presence: true
-  validates :last_name, presence: true
-  validates :email, presence: true, uniqueness: true
-  validates :login, presence: true, uniqueness: true
+  validates :name,      presence: true,
+                        length: {minimum: 2}
 
+  validates :last_name, presence: true,
+                        length: {minimum: 2}
+
+  VALID_EMAIL_REGEX = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
+  validates :email, presence: true,
+                    format: { with: VALID_EMAIL_REGEX },
+                    uniqueness: { case_sensitive: false }
+
+  validates :login, presence: true,
+                    uniqueness: {case_sensitive: false},
+                    length: {minimum: 3}
+
+  validates :password, length: { minimum: 6 }
+
+  has_secure_password # Manage the password & password_confirmation fields + the encryption + implements authenticate
   has_one    :company
 
-  def self.authenticate(email_or_login, password)
+  def self.get_by_login_pwd(email_or_login, password)
+    # Get a user by login/email & password, else nil
     for by_x in [:email, :login]
-      user = find_by(by_x=>email_or_login)
-      if user && user.password == BCrypt::Engine.hash_secret(password, user.password_salt)
-        return user
-      end
+      user = find_by(by_x=>email_or_login).try(:authenticate, password)
+      return user if user
     end
     return nil
   end
 
-  def encrypt_password
-    if password.present?
-      self.password_salt = BCrypt::Engine.generate_salt
-      self.password = BCrypt::Engine.hash_secret(password, password_salt)
-    end
+  def lowercase_email_login
+    self.email = email.downcase
+    self.login = login.downcase
   end
 end

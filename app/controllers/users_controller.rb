@@ -24,10 +24,10 @@ class UsersController < ApplicationController
   # POST /users
   # POST /users.json
   def create
-    # TODO: 
+    # TODO:
     # valid = False
     @user = User.new(user_params)
-    
+
     # lowercase login/email
     # Send email to adress
     respond_to do |format|
@@ -73,6 +73,7 @@ class UsersController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
-      params.require(:user).permit(:name, :last_name, :email, :password, :login, :date_of_birth)
+      params.require(:user).permit(:name, :last_name, :email, :password,
+                                  :password_confirmation,:login, :date_of_birth)
     end
 end
