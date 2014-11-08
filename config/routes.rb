@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
-  get 'account/login'
+  post 'account/login'
   get 'account/logout'
+  get 'account/login_page'
 
   root :to => "static#index"
 

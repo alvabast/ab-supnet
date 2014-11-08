@@ -1,0 +1,15 @@
+<% @page_title = "UserAuth | Login" %>
+<div class="Sign_Form">
+	<p><font size="1" color="green"><%= @notification %> </font></br>
+	<h1><b>Login</b></h1>
+	<%= form_tag('/account/login', method: :post) do %>
+	  <p> Login:</br> <%= text_field_tag(:login) %>
+  	  <p> Password:</br> <%= password_field_tag(:password) %>
+  	  <p> <%= submit_tag("Log me in!") %> </br>
+
+  	  <p>
+  	  	<font size="1" color="red"><%= @error %> </font>
+  	  </br>
+
+	<% end %>
+</div>

@@ -1,4 +1,4 @@
-# Schema: User(name:string, last_name:string, email:string, password_digest:string, password_salt:string,
+# Schema: User(name:string, last_name:string, email:string, password_digest:string,
 # =>           login:string, date_of_birth:string, created_at:datetime, updated_at:datetime)
 
 class User < ActiveRecord::Base

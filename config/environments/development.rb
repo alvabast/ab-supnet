@@ -34,4 +34,8 @@ Rails.application.configure do
 
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
+
+  ### Application custom constants
+  # Turn On/Off token authentication
+  config.custom_token_auth = true
 end

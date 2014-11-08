@@ -32,10 +32,20 @@ class Session < ActiveRecord::Base
     self.save()
   end
 
+  def self.get_if_token_valid(token)
+    return nil if token == nil
+
+    tmp_usr = token.split('-')[0]
+    return find_by(:user_id=>tmp_usr, :token=>token)
+  end
+
   private
     def generate_token
+      # generates a 32-characters token that includes a static part (user id)
+      # to prevent timing attacks
       begin
-        self.token = SecureRandom.hex
+        tmp_token = self.user.id.to_s + '-' + SecureRandom.hex  # Avoid timing attacks by appending a static user attr
+        self.token = tmp_token.first(32)
       end while self.class.exists?(token: token)
     end
 

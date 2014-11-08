@@ -1,45 +1,40 @@
 TOKEN_VALID = 10 * 60
 
 class AccountController < ApplicationController
-  def index
+  skip_before_action :require_login, only: [:login_page, :login]
+:error
+  def login_page
+    @error = flash[:error]
+    @notification = flash[:notification]
   end
 
   def login
-    login = params[:login]  # login or email
+    login = params[:login]  # can be login or email
     password = params[:password]
 
-    if login && password
-      @user = User.authenticate(login, password)
-      if @user
-        session = Session.find_by(user:@user)
-        session.delete if session != nil
-        new_session = Session(user:@user, valid_seconds:TOKEN_VALID).save()
+    @user = User.get_by_login_pwd(login, password)
+    if @user
+      old_session = Session.find_by(user:@user)
+      old_session.delete if old_session != nil
+      @new_session = Session.new(user:@user, valid_seconds:TOKEN_VALID)
 
-        msg = {token: new_session.token}
-        respond_to do |format|
-          format.html { render text: msg[:token] }
-          format.json { render json: msg }
-        end
-        # return new_session.token
+      if @new_session.save()
+        session[:user_token] = @new_session.token
+        redirect_to :root
       else
-        ;
-        # Username/Pwd does not exist
+        flash[:error] = @new_session.errors
+        redirect_to :controller=>'account', :action => 'login_page'
       end
     else
-      ;
-      # redirect to login page
+      flash[:error] = 'Username or login does not exist'
+      redirect_to :controller=>'account', :action => 'login_page'
     end
   end
 
   def logout
-    authenticate_or_request_with_http_token do |token, options|
-      session = Session.find_by(:token=>token)
-      session.delete if session != nil
-    end
-    msg = { status: "OK" }
-    respond_to do |format|
-      format.html { render text: msg[:status] }
-      format.json { render json: msg }
-    end
+    @current_session.delete
+    session[:user_token] = nil
+  flash[:notification] = 'User successfully logged out'
+  redirect_to :controller=>'account', :action => 'login_page'  # halts request cycle
   end
 end

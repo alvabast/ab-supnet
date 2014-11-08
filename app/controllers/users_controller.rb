@@ -1,4 +1,5 @@
 class UsersController < ApplicationController
+  skip_before_action :require_login, only: [:new, :create]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   # GET /users
@@ -28,7 +29,6 @@ class UsersController < ApplicationController
     # valid = False
     @user = User.new(user_params)
 
-    # lowercase login/email
     # Send email to adress
     respond_to do |format|
       if @user.save
