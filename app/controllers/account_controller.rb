@@ -2,7 +2,7 @@ TOKEN_VALID = 10 * 60
 
 class AccountController < ApplicationController
   skip_before_action :require_login, only: [:login_page, :login]
-:error
+
   def login_page
     @error = flash[:error]
     @notification = flash[:notification]
